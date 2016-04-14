@@ -40,9 +40,29 @@ namespace DecentralizedFileSharing
             
         }
 
-        public static bool sendPong()
+        public static bool sendPong(int port, string ip)
         {
-            return true;
+            IPAddress address = IPAddress.Parse(ip);
+            IPEndPoint endPoint = new IPEndPoint(address, port);
+            try
+            {
+                sendSocket.SendTo(pong, endPoint);
+                Console.WriteLine("No Socket Errors");
+                return true;
+            }
+            catch (SocketException se)
+            {
+                Console.WriteLine("Something went wrong with the socket");
+                Console.WriteLine(se.StackTrace);
+                return false;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Something went wrong with pong");
+                Console.WriteLine(e.StackTrace);
+                return false;
+            }
+
         }
 
         //Mostly copied from Stack Overflow, haven't figured out how it works yet.
@@ -59,6 +79,24 @@ namespace DecentralizedFileSharing
             int recv = hearSocket.ReceiveFrom(data, ref Remote);
             Console.WriteLine("Message received from {0}:", Remote.ToString());
             Console.WriteLine(Encoding.ASCII.GetString(data, 0, recv));
+            return true;
+        }
+
+        public static bool hearPing(int port)
+        {
+            byte[] data = null;
+
+            IPEndPoint server = new IPEndPoint(IPAddress.Any, port);
+            hearSocket.Bind(server);
+            Console.Write("Waiting");
+
+            IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
+            EndPoint Remote = (EndPoint)(sender);
+            int recv = hearSocket.ReceiveFrom(data, ref Remote);
+            Console.WriteLine("Message received from {0}:", Remote.ToString());
+            Console.WriteLine(Encoding.ASCII.GetString(data, 0, recv));
+            sendPong(port, sender.Address.ToString());
+
             return true;
         }
     }
