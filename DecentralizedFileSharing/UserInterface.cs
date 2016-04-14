@@ -16,5 +16,15 @@ namespace DecentralizedFileSharing
         {
             InitializeComponent();
         }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void UserInterface_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
