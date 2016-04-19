@@ -28,161 +28,120 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.reconnectBtn = new System.Windows.Forms.Button();
+            this.disconnectBtn = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.fileListBox = new System.Windows.Forms.ListBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.usernameText = new System.Windows.Forms.TextBox();
-            this.addressText = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.connectBtn = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
-            this.searchText = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.fileList = new System.Windows.Forms.ListBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.peerList = new System.Windows.Forms.ListBox();
-            this.label7 = new System.Windows.Forms.Label();
+            this.searchTxt = new System.Windows.Forms.TextBox();
+            this.downloadBtn = new System.Windows.Forms.Button();
             this.searchBtn = new System.Windows.Forms.Button();
+            this.peerBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
+            // 
+            // reconnectBtn
+            // 
+            this.reconnectBtn.Location = new System.Drawing.Point(471, 12);
+            this.reconnectBtn.Name = "reconnectBtn";
+            this.reconnectBtn.Size = new System.Drawing.Size(75, 23);
+            this.reconnectBtn.TabIndex = 0;
+            this.reconnectBtn.Text = "Reconnect";
+            this.reconnectBtn.UseVisualStyleBackColor = true;
+            // 
+            // disconnectBtn
+            // 
+            this.disconnectBtn.Location = new System.Drawing.Point(471, 42);
+            this.disconnectBtn.Name = "disconnectBtn";
+            this.disconnectBtn.Size = new System.Drawing.Size(75, 23);
+            this.disconnectBtn.TabIndex = 1;
+            this.disconnectBtn.Text = "Disconnect";
+            this.disconnectBtn.UseVisualStyleBackColor = true;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 9);
+            this.label1.Location = new System.Drawing.Point(13, 13);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(456, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Please enter a username for yourself, and an IP address for a host you would like" +
-    " to connect to.";
+            this.label1.Size = new System.Drawing.Size(266, 13);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Welcome to the Decentralized File Sharing Application!";
+            // 
+            // fileListBox
+            // 
+            this.fileListBox.FormattingEnabled = true;
+            this.fileListBox.Location = new System.Drawing.Point(12, 115);
+            this.fileListBox.Name = "fileListBox";
+            this.fileListBox.Size = new System.Drawing.Size(534, 316);
+            this.fileListBox.TabIndex = 3;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(18, 28);
+            this.label2.Location = new System.Drawing.Point(10, 73);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(58, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Username:";
-            // 
-            // usernameText
-            // 
-            this.usernameText.Location = new System.Drawing.Point(82, 25);
-            this.usernameText.Name = "usernameText";
-            this.usernameText.Size = new System.Drawing.Size(207, 20);
-            this.usernameText.TabIndex = 2;
-            // 
-            // addressText
-            // 
-            this.addressText.Location = new System.Drawing.Point(82, 51);
-            this.addressText.Name = "addressText";
-            this.addressText.Size = new System.Drawing.Size(207, 20);
-            this.addressText.TabIndex = 3;
-            this.addressText.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(15, 54);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(61, 13);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "IP Address:";
-            // 
-            // connectBtn
-            // 
-            this.connectBtn.Location = new System.Drawing.Point(471, 57);
-            this.connectBtn.Name = "connectBtn";
-            this.connectBtn.Size = new System.Drawing.Size(75, 23);
-            this.connectBtn.TabIndex = 5;
-            this.connectBtn.Text = "Connect";
-            this.connectBtn.UseVisualStyleBackColor = true;
+            this.label2.Size = new System.Drawing.Size(330, 13);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Please use the search bar to browse the files available for download.";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(13, 99);
+            this.label4.Location = new System.Drawing.Point(9, 92);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(267, 13);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "Once connected, you may search for files to download.";
+            this.label4.Size = new System.Drawing.Size(44, 13);
+            this.label4.TabIndex = 7;
+            this.label4.Text = "Search:";
             // 
-            // searchText
+            // searchTxt
             // 
-            this.searchText.Location = new System.Drawing.Point(82, 119);
-            this.searchText.Name = "searchText";
-            this.searchText.Size = new System.Drawing.Size(207, 20);
-            this.searchText.TabIndex = 7;
+            this.searchTxt.Location = new System.Drawing.Point(59, 89);
+            this.searchTxt.Name = "searchTxt";
+            this.searchTxt.Size = new System.Drawing.Size(281, 20);
+            this.searchTxt.TabIndex = 8;
             // 
-            // label5
+            // downloadBtn
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(32, 122);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(44, 13);
-            this.label5.TabIndex = 8;
-            this.label5.Text = "Search:";
-            // 
-            // fileList
-            // 
-            this.fileList.FormattingEnabled = true;
-            this.fileList.Location = new System.Drawing.Point(12, 170);
-            this.fileList.Name = "fileList";
-            this.fileList.Size = new System.Drawing.Size(336, 290);
-            this.fileList.TabIndex = 9;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(12, 151);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(31, 13);
-            this.label6.TabIndex = 10;
-            this.label6.Text = "Files:";
-            // 
-            // peerList
-            // 
-            this.peerList.FormattingEnabled = true;
-            this.peerList.Location = new System.Drawing.Point(355, 170);
-            this.peerList.Name = "peerList";
-            this.peerList.Size = new System.Drawing.Size(191, 290);
-            this.peerList.TabIndex = 11;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(355, 151);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(34, 13);
-            this.label7.TabIndex = 12;
-            this.label7.Text = "Peers";
+            this.downloadBtn.Location = new System.Drawing.Point(471, 437);
+            this.downloadBtn.Name = "downloadBtn";
+            this.downloadBtn.Size = new System.Drawing.Size(75, 23);
+            this.downloadBtn.TabIndex = 9;
+            this.downloadBtn.Text = "Download";
+            this.downloadBtn.UseVisualStyleBackColor = true;
             // 
             // searchBtn
             // 
-            this.searchBtn.Location = new System.Drawing.Point(470, 115);
+            this.searchBtn.Location = new System.Drawing.Point(471, 87);
             this.searchBtn.Name = "searchBtn";
             this.searchBtn.Size = new System.Drawing.Size(75, 23);
-            this.searchBtn.TabIndex = 13;
+            this.searchBtn.TabIndex = 10;
             this.searchBtn.Text = "Search";
             this.searchBtn.UseVisualStyleBackColor = true;
+            // 
+            // peerBtn
+            // 
+            this.peerBtn.Location = new System.Drawing.Point(13, 437);
+            this.peerBtn.Name = "peerBtn";
+            this.peerBtn.Size = new System.Drawing.Size(90, 23);
+            this.peerBtn.TabIndex = 11;
+            this.peerBtn.Text = "View Peer List";
+            this.peerBtn.UseVisualStyleBackColor = true;
             // 
             // UserInterface
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(558, 472);
+            this.Controls.Add(this.peerBtn);
             this.Controls.Add(this.searchBtn);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.peerList);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.fileList);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.searchText);
+            this.Controls.Add(this.downloadBtn);
+            this.Controls.Add(this.searchTxt);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.connectBtn);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.addressText);
-            this.Controls.Add(this.usernameText);
             this.Controls.Add(this.label2);
+            this.Controls.Add(this.fileListBox);
             this.Controls.Add(this.label1);
+            this.Controls.Add(this.disconnectBtn);
+            this.Controls.Add(this.reconnectBtn);
             this.Name = "UserInterface";
             this.Text = "Decentralized File Sharing";
             this.Load += new System.EventHandler(this.UserInterface_Load);
@@ -193,20 +152,16 @@
 
         #endregion
 
+        private System.Windows.Forms.Button reconnectBtn;
+        private System.Windows.Forms.Button disconnectBtn;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ListBox fileListBox;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox usernameText;
-        private System.Windows.Forms.TextBox addressText;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button connectBtn;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox searchText;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.ListBox fileList;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.ListBox peerList;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox searchTxt;
+        private System.Windows.Forms.Button downloadBtn;
         private System.Windows.Forms.Button searchBtn;
+        private System.Windows.Forms.Button peerBtn;
     }
 }
 

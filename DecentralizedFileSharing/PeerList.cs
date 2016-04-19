@@ -10,14 +10,14 @@ using System.Windows.Forms;
 
 namespace DecentralizedFileSharing
 {
-    public partial class UserInterface : Form
+    public partial class PeerList : Form
     {
-        public UserInterface()
+        public PeerList()
         {
             InitializeComponent();
         }
 
-        private void UserInterface_Load(object sender, EventArgs e)
+        private void PeerList_Load(object sender, EventArgs e)
         {
 
         }
