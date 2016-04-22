@@ -14,6 +14,12 @@ namespace DecentralizedFileSharing
         [STAThread]
         static void Main()
         {
+
+            Search search = new Search();
+
+            search.peerAdd("test", "1234");
+            search.peerRemove("test");
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new UserInterface());
