@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FileTransfer.cs" />
     <Compile Include="Search.cs" />
     <Compile Include="UserInterface.cs">
       <SubType>Form</SubType>
