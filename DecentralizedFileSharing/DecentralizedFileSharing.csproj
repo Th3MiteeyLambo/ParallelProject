@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="FileTransfer.cs" />
     <Compile Include="Search.cs" />
+    <Compile Include="UpdateRegistry.cs" />
     <Compile Include="UserInterface.cs">
       <SubType>Form</SubType>
     </Compile>
