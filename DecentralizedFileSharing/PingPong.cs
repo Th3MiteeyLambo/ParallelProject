@@ -14,7 +14,7 @@ namespace DecentralizedFileSharing
         private static byte[] pong = Encoding.ASCII.GetBytes("pong");
         private static Socket sendSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         private static Socket hearSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-        public UpdateRegistry update = new UpdateRegistry();
+        //public UpdateRegistry update = new UpdateRegistry();
 
         public static bool sendPing(int port, string ip)
         {

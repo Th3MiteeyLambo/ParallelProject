@@ -139,6 +139,9 @@ namespace DecentralizedFileSharing
 
         private void searchBtn_Click(object sender, EventArgs e)
         {
+
+            fileListBox.Items.Clear();
+
             String newSearch = searchTxt.Text;
 
             //NOTE we need to edit this to ask each node on our registry for the search item
@@ -164,7 +167,7 @@ namespace DecentralizedFileSharing
                     // connected to the same address as specified by the server, port
                     // combination.
                     TcpClient client = new TcpClient(ipNew, portNew);
-
+                    
                     // Translate the passed message into ASCII and store it as a Byte array.
                     Byte[] data = System.Text.Encoding.ASCII.GetBytes(newSearch);
 
@@ -191,13 +194,19 @@ namespace DecentralizedFileSharing
                     responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
                     Console.WriteLine("Received: {0}", responseData);
 
-                    // Close everything.
-                    stream.Close();
-                    client.Close();
-                    if (responseData.Contains("FF"))
+
+                    if (responseData.Substring(0,1) == "*")
                     {
+                        fileListBox.Items.Add(responseData.Substring(1) + ":" + ipNew);
 
                     }
+
+                    // Close everything.
+                    //
+                    stream.Close();
+                    client.Close();
+
+
                 }
             }
             else if (File.Exists(path))
@@ -241,6 +250,13 @@ namespace DecentralizedFileSharing
                     Int32 bytes = stream.Read(data, 0, data.Length);
                     responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
                     Console.WriteLine("Received: {0}", responseData);
+
+
+                    if (responseData.Substring(0, 1) == "*")
+                    {
+                        fileListBox.Items.Add(responseData.Substring(1) + ":" + ipNew);
+
+                    }
 
                     // Close everything.
                     stream.Close();

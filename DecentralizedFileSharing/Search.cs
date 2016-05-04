@@ -11,21 +11,35 @@ namespace DecentralizedFileSharing
     {
         private static List<peerInfo> list = new List<peerInfo>();
         private static string path = "C:" + Path.DirectorySeparatorChar + "dir" + Path.DirectorySeparatorChar + "files.csv";
+        private static string ulPath = "C:" + Path.DirectorySeparatorChar + "upload" + Path.DirectorySeparatorChar;
 
         public static string search(string key)
         {
             string found = "";
+            string str = "";
 
-            foreach (string line in File.ReadLines(path))
+            DirectoryInfo dir = new DirectoryInfo(ulPath);
+            FileInfo[] files = dir.GetFiles();
+
+            foreach (FileInfo file in files)
             {
-                if (line.Contains(key))
+                if (file.Name.Contains(key))
                 {
-                    Console.Write(line);
-                    found = line.Substring(0, line.Length - 1);
+                    return "*" + file.Name;
                 }
             }
 
-            return found;
+
+            return "";
+            //foreach (string line in File.ReadLines(path))
+            //{
+            //    if (line.Contains(key))
+            //    {
+            //        Console.Write(line);
+            //        found = line.Substring(0, line.Length - 1);
+            //    }
+            //}
+
         }
 
         public static List<peerInfo> buildList()
