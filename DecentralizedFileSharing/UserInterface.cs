@@ -24,6 +24,7 @@ namespace DecentralizedFileSharing
         public String ipNew = "";
         public int portNew;
         public TcpListener tcplistener;
+        public List<String> fileList;
 
         public UserInterface()
         {
@@ -37,7 +38,7 @@ namespace DecentralizedFileSharing
                 if (!File.Exists(path))
                 {
                     File.Create(path);
-                    String masterNode = "127.0.1.1 11000,";
+                    String masterNode = "127.0.1.1,11000";
                     TextWriter tw = new StreamWriter(path);
                     tw.WriteLine(masterNode);
                     tw.Close();
@@ -153,7 +154,7 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
                 fileListBox.Items.Clear();
 
                 String newSearch = searchTxt.Text;
-
+                fileList = new List<String>();
                 //NOTE we need to edit this to ask each node on our registry for the search item
                 if (!File.Exists(path))
                 {
@@ -179,7 +180,7 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
                         TcpClient client = new TcpClient(ipNew, portNew);
 
                         // Translate the passed message into ASCII and store it as a Byte array.
-                        Byte[] data = System.Text.Encoding.ASCII.GetBytes(newSearch);
+                        Byte[] data = System.Text.Encoding.ASCII.GetBytes("FIND:" + newSearch);
 
                         // Get a client stream for reading and writing.
                         //  Stream stream = client.GetStream();
@@ -203,11 +204,11 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
                         Int32 bytes = stream.Read(data, 0, data.Length);
                         responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
                         Console.WriteLine("Received: {0}", responseData);
-
+                        fileList.Add(responseData.Substring(1) + ":" + ipNew + ":" + portNew);
 
                         if (responseData.Substring(0, 1) == "*")
                         {
-                            fileListBox.Items.Add(responseData.Substring(1) + ":" + ipNew);
+                            fileListBox.Items.Add(responseData.Substring(1) + ":" + ipNew + ":" + portNew);
 
                         }
 
@@ -236,7 +237,7 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
                         TcpClient client = new TcpClient(ipNew, portNew);
 
                         // Translate the passed message into ASCII and store it as a Byte array.
-                        Byte[] data = System.Text.Encoding.ASCII.GetBytes(newSearch);
+                        Byte[] data = System.Text.Encoding.ASCII.GetBytes("FIND:" + newSearch);
 
                         // Get a client stream for reading and writing.
                         //  Stream stream = client.GetStream();
@@ -262,9 +263,11 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
                         Console.WriteLine("Received: {0}", responseData);
 
 
+                        fileList.Add(responseData.Substring(1) + ":" + ipNew + ":" + portNew);
+
                         if (responseData.Substring(0, 1) == "*")
                         {
-                            fileListBox.Items.Add(responseData.Substring(1) + ":" + ipNew);
+                            fileListBox.Items.Add(responseData.Substring(1) + ":" + ipNew + ":" + portNew);
 
                         }
 
@@ -285,6 +288,35 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
 
         private void downloadBtn_Click(object sender, EventArgs e)
         {
+            string text = fileListBox.GetItemText(fileListBox.SelectedItem);
+
+            string connectClient = fileList.Find(item => item == text);
+
+            var values = connectClient.Split(':');
+            //String host = values[0];
+
+            // Create a TcpClient.
+            // Note, for this client to work you need to have a TcpServer 
+            // connected to the same address as specified by the server, port
+            // combination.
+            TcpClient client = new TcpClient(values[1], Int32.Parse(values[2]));
+
+            // Translate the passed message into ASCII and store it as a Byte array.
+            Byte[] data = System.Text.Encoding.ASCII.GetBytes("GET:" +values[0]);
+
+            // Get a client stream for reading and writing.
+            //  Stream stream = client.GetStream();
+
+            NetworkStream stream = client.GetStream();
+
+            // Send the message to the connected TcpServer. 
+            stream.Write(data, 0, data.Length);
+
+            Console.WriteLine("Sent: {0}", values[0]);
+
+            FileTransfer newFileT = new FileTransfer();
+
+            newFileT.Receive();
 
         }
 
@@ -367,7 +399,7 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
 
                     String bufferincmessage = encoder.GetString(message, 0, bytesRead);
 
-
+                    
                     //if (System.Text.RegularExpressions.Regex.IsMatch(bufferincmessage, Properties.Settings.Default.REQLogin, System.Text.RegularExpressions.RegexOptions.IgnoreCase))
                     //{
                     //    bufferincmessageresult = bufferincmessage.Split('^');
