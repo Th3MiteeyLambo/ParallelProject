@@ -8,14 +8,14 @@ using System.Net;
 
 namespace DecentralizedFileSharing
 {
-    class UpdateRegistry
+    public class UpdateRegistry
     {
         private static string path = "C:" + Path.DirectorySeparatorChar + "dir" + Path.DirectorySeparatorChar + "registry.csv";
 
         public Boolean add(string ip, string port)
         {
 
-            string add = ip + ":" +port + "," + System.Environment.NewLine;
+            string add = ip + "," + port + System.Environment.NewLine;
 
             File.AppendAllText(path, add);
 
@@ -34,7 +34,7 @@ namespace DecentralizedFileSharing
                 {
                     foreach (string line in File.ReadLines(path))
                     {
-                        if (!line.Contains(ip + ":" + port))
+                        if (!line.Contains(ip + "," + port))
                         {
                             sw.WriteLine(line);
                             System.Diagnostics.Debug.WriteLine("Doesn't contain key");

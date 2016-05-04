@@ -48,6 +48,7 @@
             this.reconnectBtn.TabIndex = 0;
             this.reconnectBtn.Text = "Reconnect";
             this.reconnectBtn.UseVisualStyleBackColor = true;
+            this.reconnectBtn.Click += new System.EventHandler(this.reconnectBtn_Click);
             // 
             // disconnectBtn
             // 
@@ -57,6 +58,7 @@
             this.disconnectBtn.TabIndex = 1;
             this.disconnectBtn.Text = "Disconnect";
             this.disconnectBtn.UseVisualStyleBackColor = true;
+            this.disconnectBtn.Click += new System.EventHandler(this.disconnectBtn_Click);
             // 
             // label1
             // 
@@ -108,6 +110,7 @@
             this.downloadBtn.TabIndex = 9;
             this.downloadBtn.Text = "Download";
             this.downloadBtn.UseVisualStyleBackColor = true;
+            this.downloadBtn.Click += new System.EventHandler(this.downloadBtn_Click);
             // 
             // searchBtn
             // 
@@ -117,6 +120,7 @@
             this.searchBtn.TabIndex = 10;
             this.searchBtn.Text = "Search";
             this.searchBtn.UseVisualStyleBackColor = true;
+            this.searchBtn.Click += new System.EventHandler(this.searchBtn_Click);
             // 
             // peerBtn
             // 
@@ -126,6 +130,7 @@
             this.peerBtn.TabIndex = 11;
             this.peerBtn.Text = "View Peer List";
             this.peerBtn.UseVisualStyleBackColor = true;
+            this.peerBtn.Click += new System.EventHandler(this.peerBtn_Click);
             // 
             // UserInterface
             // 

@@ -7,7 +7,7 @@ using System.IO;
 
 namespace DecentralizedFileSharing
 {
-     class Search
+    class Search
     {
         private static List<peerInfo> list = new List<peerInfo>();
         private static string path = "C:" + Path.DirectorySeparatorChar + "dir" + Path.DirectorySeparatorChar + "files.csv";
@@ -16,7 +16,8 @@ namespace DecentralizedFileSharing
         {
             string found = "";
 
-            foreach (string line in File.ReadLines(path)){
+            foreach (string line in File.ReadLines(path))
+            {
                 if (line.Contains(key))
                 {
                     Console.Write(line);
@@ -33,7 +34,8 @@ namespace DecentralizedFileSharing
             peerInfo peer = null;
 
 
-            foreach (string line in File.ReadLines(path)){
+            foreach (string line in File.ReadLines(path))
+            {
                 info = line.Split(' ');
 
                 peer = new peerInfo(info[0], info[1].Substring(0, (info[2].Length - 1)));
@@ -47,7 +49,7 @@ namespace DecentralizedFileSharing
         {
             System.Diagnostics.Debug.WriteLine("Filename: " + fileName + " . IP: " + IP);
 
-           // File.Open(path, FileMode.OpenOrCreate);
+            // File.Open(path, FileMode.OpenOrCreate);
 
 
             string newPeer = fileName + " " + IP + "," + System.Environment.NewLine;
@@ -91,7 +93,8 @@ namespace DecentralizedFileSharing
             return true;
         }
 
-        public class peerInfo{
+        public class peerInfo
+        {
             private string IP;
             private string fileName;
 
