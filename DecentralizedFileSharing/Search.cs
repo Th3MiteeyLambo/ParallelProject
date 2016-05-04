@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Windows.Forms;
 
 namespace DecentralizedFileSharing
 {
@@ -76,7 +77,7 @@ namespace DecentralizedFileSharing
 
         public Boolean peerRemove(string key)
         {
-
+            try { 
             string tempPath = "C:" + Path.DirectorySeparatorChar + "dir" + Path.DirectorySeparatorChar + "test.csv";
 
             using (FileStream fs = new FileStream(tempPath, FileMode.OpenOrCreate))
@@ -105,6 +106,13 @@ namespace DecentralizedFileSharing
             }
 
             return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("There was an issue in the Search.peerRemove method" + ex.Message, "P2P App",
+MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
+                return false;
+            }
         }
 
         public class peerInfo

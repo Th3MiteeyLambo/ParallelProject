@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace DecentralizedFileSharing
 {
@@ -71,31 +72,40 @@ namespace DecentralizedFileSharing
 
         public static bool hearPing(int port)
         {
-            byte[] data = null;
-
-            IPEndPoint server = new IPEndPoint(IPAddress.Any, port);
-            hearSocket.Bind(server);
-            Console.Write("Waiting");
-
-            IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
-            EndPoint Remote = (EndPoint)(sender);
-            int recv = hearSocket.ReceiveFrom(data, ref Remote);
-            Console.WriteLine("Message received from {0}:", Remote.ToString());
-            Console.WriteLine(Encoding.ASCII.GetString(data, 0, recv));
-            String[] newHost = Remote.ToString().Split(':');
-            if (Encoding.ASCII.GetString(data, 0, recv) == "ping")
+            try
             {
-                sendPong(Int32.Parse(newHost[1]), newHost[0]);
-                return true;
+                byte[] data = null;
+
+                IPEndPoint server = new IPEndPoint(IPAddress.Any, port);
+                hearSocket.Bind(server);
+                Console.Write("Waiting");
+
+                IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
+                EndPoint Remote = (EndPoint)(sender);
+                int recv = hearSocket.ReceiveFrom(data, ref Remote);
+                Console.WriteLine("Message received from {0}:", Remote.ToString());
+                Console.WriteLine(Encoding.ASCII.GetString(data, 0, recv));
+                String[] newHost = Remote.ToString().Split(':');
+                if (Encoding.ASCII.GetString(data, 0, recv) == "ping")
+                {
+                    sendPong(Int32.Parse(newHost[1]), newHost[0]);
+                    return true;
+                }
+                else if (Encoding.ASCII.GetString(data, 0, recv) == "pong")
+                {
+                    UpdateRegistry update = new UpdateRegistry();
+                    update.add(newHost[0], newHost[1]);
+                    return true;
+                }
+                else
+                    return false;
             }
-            else if (Encoding.ASCII.GetString(data, 0, recv) == "pong")
+            catch (Exception ex)
             {
-                UpdateRegistry update = new UpdateRegistry();
-                update.add(newHost[0], newHost[1]);
-                return true;
-            }
-            else
+                MessageBox.Show("There was an issue in the PingPong.hearPing method" + ex.Message, "P2P App",
+MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
                 return false;
+            }
         }
 
     }
