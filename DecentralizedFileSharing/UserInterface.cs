@@ -412,7 +412,49 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
 
                     String bufferincmessage = encoder.GetString(message, 0, bytesRead);
 
-                    
+                    string results = "";
+
+                    DirectoryInfo dir = new DirectoryInfo(dlPath);
+                    FileInfo[] files = dir.GetFiles();
+
+                    if (bufferincmessage.Contains("FIND"))
+                    {
+                        foreach (FileInfo file in files)
+                        {
+                            if (file.Name.Contains(bufferincmessage.Substring(bufferincmessage.LastIndexOf(":"))))
+                            {
+                                results = file.Name;
+
+                                // Translate the passed message into ASCII and store it as a Byte array.
+                                Byte[] data = System.Text.Encoding.ASCII.GetBytes(results);
+
+                                // Get a client stream for reading and writing.
+                                //  Stream stream = client.GetStream();
+
+                                NetworkStream stream = tcpClient.GetStream();
+
+                                // Send the message to the connected TcpServer. 
+                                stream.Write(data, 0, data.Length);
+                            }
+
+                        }
+                    }
+                    else if (bufferincmessage.Contains("GET"))
+                    {
+                        FileTransfer ft = new FileTransfer();
+
+
+                        foreach (FileInfo file in files)
+                        {
+                            if (file.Name.Contains(bufferincmessage.Substring(bufferincmessage.LastIndexOf(":"))))
+                            {
+                                results = file.Name;
+                            }
+                        }
+
+                        ft.Send(results, ((IPEndPoint)tcpClient.Client.RemoteEndPoint).Port);
+
+                    }
                     //if (System.Text.RegularExpressions.Regex.IsMatch(bufferincmessage, Properties.Settings.Default.REQLogin, System.Text.RegularExpressions.RegexOptions.IgnoreCase))
                     //{
                     //    bufferincmessageresult = bufferincmessage.Split('^');
