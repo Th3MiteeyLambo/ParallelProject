@@ -20,7 +20,7 @@ namespace DecentralizedFileSharing
         private static String path = "C:" + Path.DirectorySeparatorChar + "dir" + Path.DirectorySeparatorChar + "registry.csv";
         private static string received_data = "";
         private static String[] newHost;
-        private static int port;
+        private static int port = 11000;
         private static String localTCPPort = "55111";
         private static String ftTCPPort = "51112";
         //public UpdateRegistry update = new UpdateRegistry();
@@ -80,7 +80,7 @@ namespace DecentralizedFileSharing
         {
             IPAddress address = IPAddress.Parse(ip);
             IPEndPoint endPoint = new IPEndPoint(address, port);
-            byte[] pong = Encoding.ASCII.GetBytes("pong," + "127.0.1.1"+ "," + localTCPPort + "," + ftTCPPort);
+            byte[] pong = Encoding.ASCII.GetBytes("pong," + "127.0.0.1" + "," + localTCPPort + "," + ftTCPPort + "," + port.ToString());
             try
             {
                 sendSocket.SendTo(pong, endPoint);
@@ -105,7 +105,7 @@ namespace DecentralizedFileSharing
         //Mostly copied from Stack Overflow, haven't figured out how it works yet.
 
 
-        public static bool hearPing(int newPort)
+        public static void hearPing()
         {
             try
             {
@@ -121,60 +121,27 @@ namespace DecentralizedFileSharing
                 //string recvData = Encoding.ASCII.GetString(data, 0, recv);
                 //Console.WriteLine(recvData);
                 //String[] newHost = Remote.ToString().Split(':');
-                port = newPort;
+
 
                 Thread thdsListener = new Thread(new ThreadStart(ListenThread));
                 thdsListener.Start();
-                
-                if (received_data.Contains("ping,"))
-                {
-                    string[] array = received_data.Split(',');
-                    sendPong(Int32.Parse(array[2]), array[1]);
-                    return true;
-                }
-                else if (received_data.Contains("ping"))
-                {
-                    sendPong(Int32.Parse(newHost[1]), newHost[0]);
 
-                    try
-                    {
-                        var reader = new StreamReader(File.OpenRead(path));
-                        while (!reader.EndOfStream)
-                        {
-                            string line = reader.ReadLine();
-                            string[] array = line.Split(',');
-                            sendPing(Int32.Parse(array[1]), array[0], newHost[0], Int32.Parse(newHost[1]));
-                        }
 
-                    }
-                    catch
-                    {
-                        return false;
-                    }
-                    return true;
-                }
-                else if (received_data.Contains("pong"))
-                {
-                    UpdateRegistry update = new UpdateRegistry();
-                    update.add(newHost[0], newHost[1], newHost[2], newHost[3]);
-                    return true;
-                }
-                else
-                    return false;
+                // return false;
             }
             catch (Exception ex)
             {
                 MessageBox.Show("There was an issue in the PingPong.hearPing method" + ex.Message, "P2P App",
 MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
-                return false;
+                //return false;
             }
         }
-    public static void ListenThread()
-    {
+        public static void ListenThread()
+        {
             bool done = false;
             UdpClient listener = new UdpClient(port);
             IPEndPoint groupEP = new IPEndPoint(IPAddress.Any, port);
-            EndPoint Remote = (EndPoint)(groupEP);
+
             byte[] receive_byte_array;
 
 
@@ -190,13 +157,53 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
                 // Contrast this with the talker code. It does not pass by reference.
                 // Note that this is a synchronous or blocking call.
                 receive_byte_array = listener.Receive(ref groupEP);
+                EndPoint Remote = (EndPoint)(groupEP);
+                String[] newHost = Remote.ToString().Split(':');
                 Console.WriteLine("Received a broadcast from {0}", groupEP.ToString());
                 received_data = Encoding.ASCII.GetString(receive_byte_array, 0, receive_byte_array.Length);
                 Console.WriteLine("data follows \n{0}\n\n", received_data);
 
+                if (received_data.Contains("ping,"))
+                {
+                    string[] array = received_data.Split(',');
+                    sendPong(Int32.Parse(array[2]), array[1]);
+                    //return true;
+                }
+                else if (received_data.Contains("ping"))
+                {
+                    sendPong(Int32.Parse(newHost[1]), newHost[0]);
+
+                    try
+                    {
+                        StreamReader reader = new StreamReader(File.OpenRead(path));
+                        while (!reader.EndOfStream)
+                        {
+                            string line = reader.ReadLine();
+                            string[] array = line.Split(',');
+                            sendPing(Int32.Parse(array[1]), array[0], newHost[0], Int32.Parse(newHost[1]));
+                        }
+                        reader.Close();
+
+                    }
+                    catch
+                    {
+                        //return false;
+                    }
+                    //return true;
+                }
+                else if (received_data.Contains("pong"))
+                {
+
+                    string[] array = received_data.Split(',');
+                    UpdateRegistry update = new UpdateRegistry();
+                    update.add(newHost[0], array[4], array[2], array[3]);
+                    //return true;
+                }
+                else;
+
 
             }
-            String[] newHost = Remote.ToString().Split(':');
+
 
         }
     }

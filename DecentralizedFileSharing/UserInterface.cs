@@ -54,9 +54,9 @@ namespace DecentralizedFileSharing
                 if (!File.Exists(path))
                 {
                     //File.Create(path);
-                    String masterNode = "127.0.1.1,11000,55111,55112" + System.Environment.NewLine;
+                    String masterNode = "127.0.0.1,11000,55111,55112" + System.Environment.NewLine;
                     File.AppendAllText(path, masterNode);
-                    var reader = new StreamReader(File.OpenRead(path));
+                    StreamReader reader = new StreamReader(File.OpenRead(path));
                     while (!reader.EndOfStream)
                     {
                         var line = reader.ReadLine();
@@ -64,10 +64,11 @@ namespace DecentralizedFileSharing
                         ipNew = hostArray[0];
                         portNew = Int32.Parse(hostArray[1]);
                     }
+                    reader.Close();
                 }
                 else if (File.Exists(path))
                 {
-                    var reader = new StreamReader(File.OpenRead(path));
+                    StreamReader reader = new StreamReader(File.OpenRead(path));
                     while (!reader.EndOfStream)
                     {
                         var line = reader.ReadLine();
@@ -75,24 +76,27 @@ namespace DecentralizedFileSharing
                         ipNew = hostArray[0];
                         portNew = Int32.Parse(hostArray[1]);
                     }
+                    reader.Close();
                 }
 
 
 
                 PingPong.sendPing(portNew, ipNew);
 
-                PingPong.hearPing(port);
+                PingPong.hearPing();
 
-                
+
 
                 serverstart();
 
+                pongStart();
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show("There was an issue in the UI_load method" + ex.Message, "P2P App",
 MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
-                
+
             }
         }
 
@@ -173,11 +177,12 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
                 if (!File.Exists(path))
                 {
                     File.Create(path);
-                    String masterNode = "127.0.1.1,11000,55111,55112";
+                    String masterNode = "127.0.0.1,11000,55111,55112";
                     TextWriter tw = new StreamWriter(path);
                     tw.WriteLine(masterNode);
                     tw.Close();
-                    var reader = new StreamReader(File.OpenRead(path));
+                    StreamReader reader = new StreamReader(File.OpenRead(path));
+
                     while (!reader.EndOfStream)
                     {
                         var line = reader.ReadLine();
@@ -222,7 +227,7 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
 
                         if (responseData.Substring(0, 1) == "*")
                         {
-                            fileListBox.Items.Add(responseData.Substring(1)+ ":" + ipNew + ":" + portNew + ":" + transferPort);
+                            fileListBox.Items.Add(responseData.Substring(1) + ":" + ipNew + ":" + portNew + ":" + transferPort);
 
                         }
 
@@ -233,10 +238,11 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
 
 
                     }
+                    reader.Close();
                 }
                 else if (File.Exists(path))
                 {
-                    var reader = new StreamReader(File.OpenRead(path));
+                    StreamReader reader = new StreamReader(File.OpenRead(path));
                     while (!reader.EndOfStream)
                     {
                         var line = reader.ReadLine();
@@ -279,31 +285,32 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
 
                         if (responseData != null)
                         {
-                            fileList.Add(responseData.Substring(1)+  ":" + ipNew + ":" + portNew + ":" + transferPort);
+                            fileList.Add(responseData.Substring(1) + ":" + ipNew + ":" + portNew + ":" + transferPort);
 
                             if (responseData.Substring(0, 1) == "*")
                             {
-                                fileListBox.Items.Add(responseData.Substring(1)+  ":" + ipNew + ":" + portNew + ":" + transferPort);
+                                fileListBox.Items.Add(responseData.Substring(1) + ":" + ipNew + ":" + portNew + ":" + transferPort);
 
                             }
                         }
-                    
-                    
+
+
 
                         // Close everything.
                         stream.Close();
                         client.Close();
                     }
+                    reader.Close();
                 }
-            }                
-            catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show("There was an issue in the searchBtn_click method" + ex.Message, "P2P App",
 MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
-                
+
             }
 
-}
+        }
 
         private void downloadBtn_Click(object sender, EventArgs e)
         {
@@ -312,6 +319,9 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
             string connectClient = fileList.Find(item => item == text);
 
             var values = connectClient.Split(':');
+            FileTransfer newFileT = new FileTransfer();
+
+            newFileT.Receive(values[0]);
             //String host = values[0];
 
             // Create a TcpClient.
@@ -321,21 +331,22 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
             TcpClient client = new TcpClient(values[1], Int32.Parse(values[2]));
 
             // Translate the passed message into ASCII and store it as a Byte array.
-            Byte[] data = System.Text.Encoding.ASCII.GetBytes("GET:" +values[0]);
+            Byte[] data = System.Text.Encoding.ASCII.GetBytes("GET:" + values[0] + ":" + ftTCPPort);
 
             // Get a client stream for reading and writing.
             //  Stream stream = client.GetStream();
 
             NetworkStream stream = client.GetStream();
 
-            FileTransfer newFileT = new FileTransfer();
-
-            newFileT.Receive(values[0]);
 
             // Send the message to the connected TcpServer. 
             stream.Write(data, 0, data.Length);
 
+            fileListBox.Items.Clear();
+            MessageBox.Show("Download complete." , "P2P App",
+MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
             Console.WriteLine("Sent: {0}", values[0]);
+
 
 
         }
@@ -345,6 +356,59 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
             PeerForm peerForm = new PeerForm();
             peerForm.Show();
         }
+
+        private void pongStart()
+        {
+
+            Thread udpThread = new Thread(new ThreadStart(udpSending));
+            udpThread.Start();
+        }
+
+        private void udpSending()
+        {
+            try
+            {
+                while (true)
+                {
+                    if (!File.Exists(path))
+                    {
+                        //File.Create(path);
+                        String masterNode = "127.0.0.1,11000,55111,55112" + System.Environment.NewLine;
+                        File.AppendAllText(path, masterNode);
+                        StreamReader reader = new StreamReader(File.OpenRead(path));
+                        while (!reader.EndOfStream)
+                        {
+                            var line = reader.ReadLine();
+                            String[] hostArray = line.Split(',');
+                            ipNew = hostArray[0];
+                            portNew = Int32.Parse(hostArray[1]);
+                        }
+                        reader.Close();
+                    }
+                    else if (File.Exists(path))
+                    {
+                        StreamReader reader = new StreamReader(File.OpenRead(path));
+                        while (!reader.EndOfStream)
+                        {
+                            var line = reader.ReadLine();
+                            String[] hostArray = line.Split(',');
+                            ipNew = hostArray[0];
+                            portNew = Int32.Parse(hostArray[1]);
+                            PingPong.sendPing(portNew, ipNew, "127.0.0.1", port);
+                        }
+                        reader.Close();
+                    }
+                    Thread.Sleep(180000);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("There was an issue in the ListenForClients method" + ex.Message, "P2P App",
+MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
+
+            }
+        }
+
 
         private void serverstart()
         {
@@ -356,25 +420,25 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
         private void ListenForClients()
         {
             try
-            { 
-            this.tcplistener.Start();
-
-            while (true)
             {
-                //blocks until a client has connected to the server
-                TcpClient client = this.tcplistener.AcceptTcpClient();
+                this.tcplistener.Start();
+
+                while (true)
+                {
+                    //blocks until a client has connected to the server
+                    TcpClient client = this.tcplistener.AcceptTcpClient();
 
 
-                // here was first an message that send hello client
-                //
-                ///////////////////////////////////////////////////
+                    // here was first an message that send hello client
+                    //
+                    ///////////////////////////////////////////////////
 
-                //create a thread to handle communication
-                //with connected client
-                Thread clientThread = new Thread(new ParameterizedThreadStart(HandleClientComm));
+                    //create a thread to handle communication
+                    //with connected client
+                    Thread clientThread = new Thread(new ParameterizedThreadStart(HandleClientComm));
 
-                clientThread.Start(client);
-            }
+                    clientThread.Start(client);
+                }
             }
             catch (Exception ex)
             {
@@ -423,7 +487,6 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
                     string results = "";
 
                     DirectoryInfo dir = new DirectoryInfo(dlPath);
-
                     FileInfo[] files = dir.GetFiles();
 
                     if (bufferincmessage.Contains("FIND"))
@@ -484,12 +547,12 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
 
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show("There was an issue in the HandleClientComm method" + ex.Message, "P2P App",
 MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
-                
+
             }
-}
+        }
     }
 }

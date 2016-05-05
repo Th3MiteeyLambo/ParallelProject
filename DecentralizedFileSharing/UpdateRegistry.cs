@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,11 +12,15 @@ namespace DecentralizedFileSharing
     public class UpdateRegistry
     {
         private static string path = "C:" + Path.DirectorySeparatorChar + "dir" + Path.DirectorySeparatorChar + "registry.csv";
-        private static string dirFolder = "C:" + Path.DirectorySeparatorChar + "dir" + Path.DirectorySeparatorChar; 
+        private static string dirFolder = "C:" + Path.DirectorySeparatorChar + "dir" + Path.DirectorySeparatorChar;
+        private static Boolean comparBool = false;
 
         public Boolean add(string ip, string port, string genTCPPort, string ftTCPPort)
         {
             try {
+
+                comparBool = false;
+                string comparison = ip + "," + port;
                 string add = ip + "," + port + "," + genTCPPort + "," + ftTCPPort + System.Environment.NewLine;
                 if (!File.Exists(dirFolder))
                 {
@@ -28,7 +32,19 @@ namespace DecentralizedFileSharing
                     File.Create(path);
                 }
 
-                File.AppendAllText(path, add);
+                ArrayList registry = new ArrayList();
+
+                foreach (string line in File.ReadLines(path))
+                {
+                    comparBool = line.Contains(comparison);
+                }
+
+                
+                if (comparBool == false)
+                {
+                    //File.AppendAllText(path, add);
+                }
+                
 
                 return true;
             }
