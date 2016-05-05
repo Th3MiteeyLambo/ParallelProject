@@ -336,7 +336,7 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
 
             FileTransfer newFileT = new FileTransfer();
 
-            newFileT.Receive();
+            newFileT.Receive(values[0]);
 
         }
 

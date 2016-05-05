@@ -20,6 +20,8 @@ namespace DecentralizedFileSharing
         public ArrayList alSockets;
         private static string dlPath = "C:" + Path.DirectorySeparatorChar + "download" + Path.DirectorySeparatorChar;
         public int transferPort = 55112;
+        public string newFileName = "";
+        TcpClient tcpClient;
 
         public void Send(string fName, int port)
         {
@@ -43,10 +45,11 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
             }
         }
 
-        public void Receive()
+        public void Receive(string fileName)
         {
             try
             {
+                newFileName = fileName;
                 alSockets = new ArrayList();
                 Thread thdsListener = new Thread(new ThreadStart(ListenerThread));
                 thdsListener.Start();
@@ -66,25 +69,24 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
             tcpListener.Start();
             while (true)
             {
-                Socket handlerSocket = tcpListener.AcceptSocket();
-                if (handlerSocket.Connected)
+                tcpClient = tcpListener.AcceptTcpClient();
+                if (tcpClient.Connected)
                 {
 
                     tcpListener.Stop();
-                    var thdstHandler = new ParameterizedThreadStart(HandlerThread);
 
-                    Thread thdHandler = new Thread(thdstHandler);
-                    thdHandler.Start(handlerSocket);
+                    Thread thdHandler = new Thread(new ThreadStart(HandlerThread));
+                    thdHandler.Start(tcpClient);
                 }
             }
 
         }
-        public void HandlerThread(object state)
+        public void HandlerThread()
         {
             try
             {
-                using (Socket handlerSocket = (Socket)state)
-                using (NetworkStream networkStream = new NetworkStream(handlerSocket))
+                
+                using (NetworkStream networkStream = tcpClient.GetStream())
                 {
                     int thisRead = 0;
                     int blockSize = 1024;
@@ -97,9 +99,9 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
                         if (thisRead == 0) break;
                         ms.Write(dataByte, 0, thisRead);
                     }
-                    //File.WriteAllBytes(filedir, ms.ToArray());
+                    File.WriteAllBytes(dlPath + newFileName, ms.ToArray());
                     networkStream.Close();
-                    handlerSocket.Close();
+                    
 
 
 
@@ -107,6 +109,8 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
             }
             catch (Exception ex)
             {
+                MessageBox.Show("There was an issue in the FileTransfer.HandlerThread method" + ex.Message, "P2P App",
+MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
 
             }
 
