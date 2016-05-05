@@ -18,7 +18,7 @@ namespace DecentralizedFileSharing
     {
         public Socket Handler;
         private Socket listener;
-        public int port = 55000;
+        public int port = 11000;
         private static string path = "C:" + Path.DirectorySeparatorChar + "dir" + Path.DirectorySeparatorChar + "registry.csv";
         private static string dir = "C:" + Path.DirectorySeparatorChar + "dir" + Path.DirectorySeparatorChar;
         private static string dlPath = "C:" + Path.DirectorySeparatorChar + "download" + Path.DirectorySeparatorChar;
