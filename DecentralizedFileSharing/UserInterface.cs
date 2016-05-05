@@ -87,7 +87,6 @@ namespace DecentralizedFileSharing
 
                 serverstart();
 
-                receiveListen.Receive();
             }
             catch(Exception ex)
             {
@@ -219,11 +218,11 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
                         Int32 bytes = stream.Read(data, 0, data.Length);
                         responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
                         Console.WriteLine("Received: {0}", responseData);
-                        fileList.Add(responseData.Substring(1) + ":" + ipNew + ":" + portNew);
+                        fileList.Add(responseData.Substring(1) + ":" + ipNew + ":" + portNew + ":" + transferPort);
 
                         if (responseData.Substring(0, 1) == "*")
                         {
-                            fileListBox.Items.Add(responseData.Substring(1) + ":" + ipNew + ":" + portNew);
+                            fileListBox.Items.Add(responseData.Substring(1)+ ":" + ipNew + ":" + portNew + ":" + transferPort);
 
                         }
 
@@ -280,11 +279,11 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
 
                         if (responseData != null)
                         {
-                            fileList.Add(responseData.Substring(1) + ":" + ipNew + ":" + transferPort);
+                            fileList.Add(responseData.Substring(1)+  ":" + ipNew + ":" + portNew + ":" + transferPort);
 
                             if (responseData.Substring(0, 1) == "*")
                             {
-                                fileListBox.Items.Add(responseData.Substring(1) + ":" + ipNew + ":" + transferPort);
+                                fileListBox.Items.Add(responseData.Substring(1)+  ":" + ipNew + ":" + portNew + ":" + transferPort);
 
                             }
                         }
@@ -329,14 +328,15 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
 
             NetworkStream stream = client.GetStream();
 
+            FileTransfer newFileT = new FileTransfer();
+
+            newFileT.Receive(values[0]);
+
             // Send the message to the connected TcpServer. 
             stream.Write(data, 0, data.Length);
 
             Console.WriteLine("Sent: {0}", values[0]);
 
-            FileTransfer newFileT = new FileTransfer();
-
-            newFileT.Receive(values[0]);
 
         }
 
@@ -423,10 +423,12 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
                     string results = "";
 
                     DirectoryInfo dir = new DirectoryInfo(dlPath);
+
                     FileInfo[] files = dir.GetFiles();
-                    String searchFN = bufferincmessage.Substring(bufferincmessage.LastIndexOf(':') + 1);
+
                     if (bufferincmessage.Contains("FIND"))
                     {
+                        String searchFN = bufferincmessage.Substring(bufferincmessage.LastIndexOf(':') + 1);
                         foreach (FileInfo file in files)
                         {
                             if (file.Name.Contains(searchFN))
@@ -450,16 +452,16 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
                     else if (bufferincmessage.Contains("GET"))
                     {
                         FileTransfer ft = new FileTransfer();
-
+                        String[] incMessage = bufferincmessage.Split(':');
 
                         foreach (FileInfo file in files)
                         {
-                            if (file.Name.Contains(searchFN))
+                            if (file.Name.Contains(incMessage[1]))
                             {
                                 results = file.Name;
                             }
                         }
-                        int sendPort = ((IPEndPoint)tcpClient.Client.RemoteEndPoint).Port;
+                        int sendPort = Int32.Parse(incMessage[2]);
 
                         ft.Send(results, sendPort);
 

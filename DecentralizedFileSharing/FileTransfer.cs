@@ -22,6 +22,7 @@ namespace DecentralizedFileSharing
         public int transferPort = 55112;
         public string newFileName = "";
         TcpClient tcpClient;
+        TcpListener tcpListener;
 
         public void Send(string fName, int port)
         {
@@ -50,9 +51,11 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
             try
             {
                 newFileName = fileName;
-                alSockets = new ArrayList();
-                Thread thdsListener = new Thread(new ThreadStart(ListenerThread));
-                thdsListener.Start();
+                //alSockets = new ArrayList();
+
+                tcpListener = new TcpListener(IPAddress.Any, transferPort);
+                Thread listen = new Thread(new ThreadStart(ListenerThread));
+                listen.Start();
             }
             catch (Exception ex)
             {
@@ -64,48 +67,55 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
 
         public void ListenerThread()
         {
-            TcpListener tcpListener = new TcpListener(IPAddress.Any, transferPort);
-
-            tcpListener.Start();
-            while (true)
+            try
             {
-                tcpClient = tcpListener.AcceptTcpClient();
-                if (tcpClient.Connected)
+                this.tcpListener.Start();
+
+
+                while (true)
                 {
+                    TcpClient tcpClient = this.tcpListener.AcceptTcpClient();
 
-                    tcpListener.Stop();
-
-                    Thread thdHandler = new Thread(new ThreadStart(HandlerThread));
+                    Thread thdHandler = new Thread(new ParameterizedThreadStart(HandlerThread));
                     thdHandler.Start(tcpClient);
+
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("There was an issue in the FT:ListenerThread method" + ex.Message, "P2P App",
+MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
             }
 
         }
-        public void HandlerThread()
+        public void HandlerThread(object client)
         {
             try
             {
-                
-                using (NetworkStream networkStream = tcpClient.GetStream())
+                TcpClient tcpClient = (TcpClient)client;
+
+                NetworkStream networkStream = tcpClient.GetStream();
+
+                int thisRead = 0;
+                int blockSize = 1024;
+                Byte[] dataByte = new Byte[blockSize];
+                var ms = new MemoryStream();
+
+                while (true)
                 {
-                    int thisRead = 0;
-                    int blockSize = 1024;
-                    Byte[] dataByte = new Byte[blockSize];
-                    var ms = new MemoryStream();
-
-                    while (true)
-                    {
-                        thisRead = networkStream.Read(dataByte, 0, blockSize);
-                        if (thisRead == 0) break;
-                        ms.Write(dataByte, 0, thisRead);
-                    }
-                    File.WriteAllBytes(dlPath + newFileName, ms.ToArray());
-                    networkStream.Close();
-                    
-
-
-
+                    thisRead = networkStream.Read(dataByte, 0, blockSize);
+                    if (thisRead == 0) break;
+                    ms.Write(dataByte, 0, thisRead);
                 }
+
+                Byte[] newBA = ToByteArray(ms);
+                File.WriteAllBytes(dlPath + newFileName, newBA);
+                networkStream.Close();
+
+
+
+
+
             }
             catch (Exception ex)
             {
@@ -116,17 +126,16 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
 
         }
 
-        public static class Convert2
+
+        public static byte[] ToByteArray(Stream stream)
         {
-            public static byte[] ToByteArray(Stream stream)
-            {
-                stream.Position = 0;
-                byte[] buffer = new byte[stream.Length];
-                for (int totalBytesCopied = 0; totalBytesCopied < stream.Length; )
-                    totalBytesCopied += stream.Read(buffer, totalBytesCopied, Convert.ToInt32(stream.Length) - totalBytesCopied);
-                return buffer;
-            }
+            stream.Position = 0;
+            byte[] buffer = new byte[stream.Length];
+            for (int totalBytesCopied = 0; totalBytesCopied < stream.Length;)
+                totalBytesCopied += stream.Read(buffer, totalBytesCopied, Convert.ToInt32(stream.Length) - totalBytesCopied);
+            return buffer;
         }
+
     }
 
 
