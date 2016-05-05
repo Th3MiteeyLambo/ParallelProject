@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DecentralizedFileSharing</RootNamespace>
     <AssemblyName>DecentralizedFileSharing</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -47,6 +48,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileTransfer.cs" />
+    <Compile Include="PeerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PeerForm.Designer.cs">
+      <DependentUpon>PeerForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Search.cs" />
     <Compile Include="UpdateRegistry.cs" />
     <Compile Include="UserInterface.cs">
@@ -58,6 +65,9 @@
     <Compile Include="PingPong.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="PeerForm.resx">
+      <DependentUpon>PeerForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UserInterface.resx">
       <DependentUpon>UserInterface.cs</DependentUpon>
     </EmbeddedResource>

@@ -15,14 +15,14 @@ namespace DecentralizedFileSharing
         static void Main()
         {
 
-            Search search = new Search();
+            //Search search = new Search();
 
             //search.peerAdd("test", "1234");
             //search.peerRemove("test");
 
-            UpdateRegistry test = new UpdateRegistry();
+            //UpdateRegistry test = new UpdateRegistry();
 
-            test.add("1234", "port");
+            //test.add("1234", "port");
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

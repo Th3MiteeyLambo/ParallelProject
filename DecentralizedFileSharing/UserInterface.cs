@@ -20,11 +20,13 @@ namespace DecentralizedFileSharing
         private Socket listener;
         public int port = 55000;
         private static string path = "C:" + Path.DirectorySeparatorChar + "dir" + Path.DirectorySeparatorChar + "registry.csv";
+        private static string dir = "C:" + Path.DirectorySeparatorChar + "dir" + Path.DirectorySeparatorChar;
         private static string dlPath = "C:" + Path.DirectorySeparatorChar + "download" + Path.DirectorySeparatorChar;
         public String ipNew = "";
         public int portNew;
         public TcpListener tcplistener;
         public List<String> fileList;
+        FileTransfer receiveListen = new FileTransfer();
 
         public UserInterface()
         {
@@ -35,13 +37,22 @@ namespace DecentralizedFileSharing
         {
             try
             {
+
+                if (!File.Exists(dir))
+                {
+                    System.IO.Directory.CreateDirectory(dir);
+                }
+
+                if (!File.Exists(dlPath))
+                {
+                    System.IO.Directory.CreateDirectory(dlPath);
+                }
+
                 if (!File.Exists(path))
                 {
-                    File.Create(path);
-                    String masterNode = "127.0.1.1,11000";
-                    TextWriter tw = new StreamWriter(path);
-                    tw.WriteLine(masterNode);
-                    tw.Close();
+                    //File.Create(path);
+                    String masterNode = "127.0.1.1,11000" + System.Environment.NewLine;
+                    File.AppendAllText(path, masterNode);
                     var reader = new StreamReader(File.OpenRead(path));
                     while (!reader.EndOfStream)
                     {
@@ -63,16 +74,17 @@ namespace DecentralizedFileSharing
                     }
                 }
 
-                if (!File.Exists(dlPath))
-                {
-                    File.Create(dlPath);
-                }
 
 
                 PingPong.sendPing(portNew, ipNew);
 
                 PingPong.hearPing(port);
+
+                
+
                 serverstart();
+
+                receiveListen.Receive();
             }
             catch(Exception ex)
             {
@@ -322,7 +334,8 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
 
         private void peerBtn_Click(object sender, EventArgs e)
         {
-
+            PeerForm peerForm = new PeerForm();
+            peerForm.Show();
         }
 
         private void serverstart()
