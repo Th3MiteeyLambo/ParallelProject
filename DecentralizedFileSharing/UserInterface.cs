@@ -24,6 +24,7 @@ namespace DecentralizedFileSharing
         private static string dlPath = "C:" + Path.DirectorySeparatorChar + "download" + Path.DirectorySeparatorChar;
         public String ipNew = "";
         public int portNew;
+        public int transferPort;
         public TcpListener tcplistener;
         public List<String> fileList;
         FileTransfer receiveListen = new FileTransfer();
@@ -185,7 +186,7 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
                         //String host = values[0];
                         String[] hostArray = line.Split(',');
                         ipNew = hostArray[0];
-                        portNew = Int32.Parse(hostArray[1]);
+                        portNew = Int32.Parse(hostArray[2]);
 
                         // Create a TcpClient.
                         // Note, for this client to work you need to have a TcpServer 
@@ -242,7 +243,8 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
                         var line = reader.ReadLine();
                         String[] hostArray = line.Split(',');
                         ipNew = hostArray[0];
-                        portNew = Int32.Parse(hostArray[1]);
+                        portNew = Int32.Parse(hostArray[2]);
+                        transferPort = Int32.Parse(hostArray[3]);
 
                         // Create a TcpClient.
                         // Note, for this client to work you need to have a TcpServer 
@@ -276,14 +278,18 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
                         responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
                         Console.WriteLine("Received: {0}", responseData);
 
-
-                        fileList.Add(responseData.Substring(1) + ":" + ipNew + ":" + portNew);
-
-                        if (responseData.Substring(0, 1) == "*")
+                        if (responseData != null)
                         {
-                            fileListBox.Items.Add(responseData.Substring(1) + ":" + ipNew + ":" + portNew);
+                            fileList.Add(responseData.Substring(1) + ":" + ipNew + ":" + transferPort);
 
+                            if (responseData.Substring(0, 1) == "*")
+                            {
+                                fileListBox.Items.Add(responseData.Substring(1) + ":" + ipNew + ":" + transferPort);
+
+                            }
                         }
+                    
+                    
 
                         // Close everything.
                         stream.Close();
@@ -418,14 +424,14 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
 
                     DirectoryInfo dir = new DirectoryInfo(dlPath);
                     FileInfo[] files = dir.GetFiles();
-
+                    String searchFN = bufferincmessage.Substring(bufferincmessage.LastIndexOf(':') + 1);
                     if (bufferincmessage.Contains("FIND"))
                     {
                         foreach (FileInfo file in files)
                         {
-                            if (file.Name.Contains(bufferincmessage.Substring(bufferincmessage.LastIndexOf(":"))))
+                            if (file.Name.Contains(searchFN))
                             {
-                                results = file.Name;
+                                results = "*" + file.Name;
 
                                 // Translate the passed message into ASCII and store it as a Byte array.
                                 Byte[] data = System.Text.Encoding.ASCII.GetBytes(results);
@@ -448,7 +454,7 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
 
                         foreach (FileInfo file in files)
                         {
-                            if (file.Name.Contains(bufferincmessage.Substring(bufferincmessage.LastIndexOf(":"))))
+                            if (file.Name.Contains(searchFN))
                             {
                                 results = file.Name;
                             }
@@ -458,6 +464,7 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
                         ft.Send(results, sendPort);
 
                     }
+
                     //if (System.Text.RegularExpressions.Regex.IsMatch(bufferincmessage, Properties.Settings.Default.REQLogin, System.Text.RegularExpressions.RegexOptions.IgnoreCase))
                     //{
                     //    bufferincmessageresult = bufferincmessage.Split('^');
