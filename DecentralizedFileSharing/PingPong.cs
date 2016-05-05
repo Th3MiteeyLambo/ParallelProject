@@ -22,6 +22,7 @@ namespace DecentralizedFileSharing
         private static String[] newHost;
         private static int port;
         private static String localTCPPort = "55111";
+        private static String ftTCPPort = "51112";
         //public UpdateRegistry update = new UpdateRegistry();
 
         public static bool sendPing(int port, string ip)
@@ -79,7 +80,7 @@ namespace DecentralizedFileSharing
         {
             IPAddress address = IPAddress.Parse(ip);
             IPEndPoint endPoint = new IPEndPoint(address, port);
-            byte[] pong = Encoding.ASCII.GetBytes("pong," + "127.0.1.1"+ "," + localTCPPort);
+            byte[] pong = Encoding.ASCII.GetBytes("pong," + "127.0.1.1"+ "," + localTCPPort + "," + ftTCPPort);
             try
             {
                 sendSocket.SendTo(pong, endPoint);
@@ -155,7 +156,7 @@ namespace DecentralizedFileSharing
                 else if (received_data.Contains("pong"))
                 {
                     UpdateRegistry update = new UpdateRegistry();
-                    update.add(newHost[0], newHost[1], newHost[2]);
+                    update.add(newHost[0], newHost[1], newHost[2], newHost[3]);
                     return true;
                 }
                 else

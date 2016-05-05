@@ -19,7 +19,7 @@ namespace DecentralizedFileSharing
         public string Content;
         public ArrayList alSockets;
         private static string dlPath = "C:" + Path.DirectorySeparatorChar + "download" + Path.DirectorySeparatorChar;
-        public int transferPort = 55111;
+        public int transferPort = 55112;
 
         public void Send(string fName, int port)
         {

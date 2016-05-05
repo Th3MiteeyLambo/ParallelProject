@@ -28,6 +28,7 @@ namespace DecentralizedFileSharing
         public List<String> fileList;
         FileTransfer receiveListen = new FileTransfer();
         public int localTCPPort = 55111;
+        public int ftTCPPort = 55112;
 
         public UserInterface()
         {
@@ -52,7 +53,7 @@ namespace DecentralizedFileSharing
                 if (!File.Exists(path))
                 {
                     //File.Create(path);
-                    String masterNode = "127.0.1.1,11000,55111" + System.Environment.NewLine;
+                    String masterNode = "127.0.1.1,11000,55111,55112" + System.Environment.NewLine;
                     File.AppendAllText(path, masterNode);
                     var reader = new StreamReader(File.OpenRead(path));
                     while (!reader.EndOfStream)
@@ -172,7 +173,7 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
                 if (!File.Exists(path))
                 {
                     File.Create(path);
-                    String masterNode = "127.0.1.1,11000";
+                    String masterNode = "127.0.1.1,11000,55111,55112";
                     TextWriter tw = new StreamWriter(path);
                     tw.WriteLine(masterNode);
                     tw.Close();
@@ -452,8 +453,9 @@ MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
                                 results = file.Name;
                             }
                         }
+                        int sendPort = ((IPEndPoint)tcpClient.Client.RemoteEndPoint).Port;
 
-                        ft.Send(results, ((IPEndPoint)tcpClient.Client.RemoteEndPoint).Port);
+                        ft.Send(results, sendPort);
 
                     }
                     //if (System.Text.RegularExpressions.Regex.IsMatch(bufferincmessage, Properties.Settings.Default.REQLogin, System.Text.RegularExpressions.RegexOptions.IgnoreCase))

@@ -14,10 +14,10 @@ namespace DecentralizedFileSharing
         private static string path = "C:" + Path.DirectorySeparatorChar + "dir" + Path.DirectorySeparatorChar + "registry.csv";
         private static string dirFolder = "C:" + Path.DirectorySeparatorChar + "dir" + Path.DirectorySeparatorChar; 
 
-        public Boolean add(string ip, string port, string udpPort)
+        public Boolean add(string ip, string port, string genTCPPort, string ftTCPPort)
         {
             try {
-                string add = ip + "," + port + "," + udpPort + System.Environment.NewLine;
+                string add = ip + "," + port + "," + genTCPPort + "," + ftTCPPort + System.Environment.NewLine;
                 if (!File.Exists(dirFolder))
                 {
                     System.IO.Directory.CreateDirectory(dirFolder);
